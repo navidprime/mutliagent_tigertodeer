@@ -95,7 +95,6 @@ class Game:
         # 1. object doesn't go into a friend member
         # 2. object doesn't go into wall
         
-        # TODO eniverment has problem. Here . __move function is not working proparly
         if move == 0 or move == 1:
             step = -1 if move == 0 else 1
             
