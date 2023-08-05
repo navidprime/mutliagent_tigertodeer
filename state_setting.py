@@ -71,7 +71,7 @@ def compute_blocks(cord, length):
                 corners[2] = 1
         elif cord[1] == length-1:
             if length-1 <= cord[0] <= length*2:
-                corners[1] = 1 # TODO
+                corners[1] = 1
         elif cord[1] == length*2:
             if length-1 <= cord[0] <= length*2:
                 corners[0] = 1

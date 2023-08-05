@@ -1,7 +1,6 @@
 from game import GameWithGraphics
 from state_setting import get_state
 from multi_agent import Agents
-
 import numpy as np
 
 length = 4
@@ -19,12 +18,13 @@ def main():
                     4096,
                     lambda n, lr: lr if n < 300 else lr*np.exp(-0.001),
                     .002,
-                    epsilon_length=5)
+                    epsilon_length=300)
     
-    agents.load_models(['./models_in_90timeout/0', './models_in_90timeout/1',
-                        './models_in_90timeout/2']) # i'm retraining the previous saved models
+    # if you wana retrain previous model uncomment these 
+    # agents.load_models(['PATHTOMODEL0', 'PATHTOMODEL1',
+    #                     'PATHTOMODEL2'])
     
-    for i in range(40_000):
+    for i in range(100):
         actions = agents(state)
         actions = [a.numpy().item() for a in actions]
         next_state, rewards, done = game.step(
@@ -39,7 +39,7 @@ def main():
             print('-'*100)
             print('n iters: ', i)
             print('n games: ', agents.agents[0].n_games.numpy().item())
-            print('last 100 matchs group A won (Percentage): ', np.sum(matches_won), '/', len(matches_won))
+            print('last 100 matchs group A won: ', np.sum(matches_won), '/', len(matches_won))
             
             if len(matches_won) > 100:
                 matches_won = list()
@@ -54,7 +54,7 @@ def main():
             
             state = game.reset()
         
-    agents.save_models()
+    agents.save_models('./saved_models2/')
 
 if __name__ == '__main__':
     main()

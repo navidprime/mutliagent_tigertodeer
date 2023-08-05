@@ -1,8 +1,5 @@
 import numpy as np
 
-# -1 -> blocks
-# 1 -> group A
-# 2 -> group B
 BLOCK_VALUE = -1
 GROUP_A_VALUE = 1
 GROUP_B_VALUE = 2
@@ -28,16 +25,14 @@ class Game:
         self.state_fn = state_fn
         self.game_colddown = game_colddown
         
-        self.members = [] # 0,1: A | 2: B
-        
-        for i in range(3):
-            group = 'A' if i < 2 else 'B'
-            self.members.append(GroupMember(group, (0, 0), i, 0))
+        self.members = [
+            GroupMember('A' if i < 2 else 'B', (0, 0), i, 0) for i in range(3)
+            ] # 0 and 1 indexes for A 2 for B
         
         self.n_iterations = 0
         self.done = False
         
-        self.__reset_grid()
+        self.__reset_grid() # init grid here
         
     def __reset_grid(self):
         
@@ -49,11 +44,12 @@ class Game:
     
     def __reset_members_cords_and_rewards(self):
         for i in range(len(self.members)):
+            # i have added +1 to each because of the padding
             if self.members[i].group == 'A':
                 x_cord = np.random.randint(1, self.size)
                 y_cord = np.random.randint(1, self.size*3)
             elif self.members[i].group == 'B':
-                x_cord = np.random.randint(self.size*2+1, self.size*3) # +1 because of padding
+                x_cord = np.random.randint(self.size*2+1, self.size*3)
                 y_cord = np.random.randint(1, self.size*3)
             
             self.members[i].cord = (x_cord, y_cord)
@@ -62,7 +58,7 @@ class Game:
     def __collision_with_enemy_members(self): # group B dies
         if any(
             [
-                (mem.cord == self.members[-1].cord or self.__distance(mem.cord, self.members[-1].cord) == 1) for mem in self.members[:-1]
+                (self.__distance(mem.cord, self.members[-1].cord) < 1.001) for mem in self.members[:-1]
             ]
         ):
             return True
@@ -81,7 +77,7 @@ class Game:
             members=self.members,
             time=self.n_iterations/self.game_colddown,
             size=self.size
-            ) # TODO
+            )
     
     def reset(self):
         self.__reset_grid()
@@ -91,14 +87,13 @@ class Game:
         
         return self.__get_state()
     
-    def __move(self, obj, move):
+    def __move(self, obj:GroupMember, move):
         # 1. object doesn't go into a friend member
         # 2. object doesn't go into wall
         
         if move == 0 or move == 1:
             step = -1 if move == 0 else 1
             
-            # print([(obj.cord[1] + step == mobj.cord[1] and obj.cord[0] == mobj.cord[0]) for mobj in self.members[:-1]])
             if not any([(obj.cord[1] + step == mobj.cord[1] and obj.cord[0] == mobj.cord[0] and obj.group == mobj.group) for mobj in self.members])\
                 and self.grid[obj.cord[0], obj.cord[1]+step] != BLOCK_VALUE:
                 obj.cord = (obj.cord[0], obj.cord[1]+step)
@@ -114,13 +109,14 @@ class Game:
     def step(self, moves):
         # moves is a list moves for each member based on index
         # print(self.grid)
-        # check game endings 1
+        
+        # A wins
         if self.__collision_with_enemy_members():
             self.done = True
             for i in range(3):
                 self.members[i].reward = 10 if i != 2 else -10
         
-        # check game endings 2
+        # B wins
         if self.__timeout():
             self.done = True
             for i in range(3):
@@ -134,8 +130,6 @@ class Game:
         self.__reset_grid()
         for i in range(3):
             self.grid[self.members[i].cord] = GROUP_A_VALUE if self.members[i].group == 'A' else GROUP_B_VALUE
-        
-        # change some variables
         
         self.n_iterations += 1
         

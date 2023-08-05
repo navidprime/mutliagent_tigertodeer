@@ -1,7 +1,6 @@
 from game import GameWithGraphics
 from state_setting import get_state
 from multi_agent import Agents
-
 import numpy as np
 import time
 
@@ -20,35 +19,24 @@ def main():
                     .009,
                     epsilon_length=200)
     
-    agents.load_models(['./models_in40timeout/0', './models_in40timeout/1',
-                        './models_in40timeout/2'])
+    agents.load_models(['./saved_models/0', './saved_models/1',
+                        './saved_models/2'])
+    
     agents.set_test_mode(True)
     
     for i in range(80_000):
-        # print(state[0][-5:])
-        # print(state[1][-5:])
-        # print(state[0])
-        # print(state[2])
         actions = agents(state)
         actions = [a.numpy().item() for a in actions]
-        # print(actions)
         next_state, rewards, done = game.step(
             actions
         )
-        # agents.train_and_remember(state, actions, rewards, next_state, done, False)
         
         state = next_state
         
         if done:
-            # print(i, agents.agents[0].n_games.numpy().item())
-            # agents.when_episode_done()
-            # agents.train_long()
-            
             state = game.reset()
         
         time.sleep(1/fps)
         
-    agents.save_models()
-
 if __name__ == '__main__':
     main()

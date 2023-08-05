@@ -1,6 +1,5 @@
 import turtle
-import numpy as np
-from game_engine import Game, GroupMember
+from game_engine import Game
 
 COLORS = [
           '#f8fafc', # white
@@ -21,7 +20,7 @@ class GameWithGraphics(Game):
             self.__make_turtle_obj(obj) for obj in self.members
         ]
         
-        self.is_blocks_drawed = False # we will show blocks only once
+        self.is_blocks_drawed = False # we will render blocks only once
         
         self.offset = size*BLOCK_SIZE*3/2 # used to center the board
         
