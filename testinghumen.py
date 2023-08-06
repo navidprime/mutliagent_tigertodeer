@@ -23,10 +23,6 @@ def on_press(k):
 fps = 2
 length = 4
 
-# Note: i see that if the value of time in 2 agents states is high (close to 1). 
-#       they tend to move directly to the B
-#       otherwise they sometime get stuck and don't move at all.
-# TODO: setting time value close to 1 in agents A might help to catch B faster 
 def main():
     global B_action
     
@@ -50,6 +46,9 @@ def main():
     listener.start()
     
     for i in range(80_000):
+        state = list(state)
+        state[0][5] = .99 # they realy did take things seriously
+        state[1][5] = .99
         actions = agents(state)
         actions = [a.numpy().item() for a in actions]
         next_state, rewards, done = game.step(
