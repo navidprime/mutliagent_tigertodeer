@@ -2,7 +2,9 @@
 this is a very simple multi-agent reinforcement learning task.
 
 ## info
-2 agent (group A)(will gain +10 each reward) should catch 1 agent (group B)(will gain +10 reward).
+there are 2 group:
+- group A: consists of 2 agent, thier goal is to catch the agent in group B
+- group B: consists of 1 agent, its goal is to stay alive until the time ends
 
 ### enviroment
 env is just a grid 3ax3a where a is the length of grid. there is a center block (just for a bit complexity)
