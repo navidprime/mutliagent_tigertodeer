@@ -31,5 +31,3 @@ here is one of cases where agents in A work each other to catch B
 - state_setting -> used to extract states from env
 - testing -> test agents againest each other
 - testinghuman -> play agent B youself
-
-note : models in models_in40timeout are the final results
